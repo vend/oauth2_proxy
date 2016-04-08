@@ -28,20 +28,26 @@ build:
           name: go build
           code: CGO_ENABLED=0 go build -a -ldflags '-s' -installsuffix cgo -o app .
 
-      # Copy binary to a location that gets passed along to the deploy pipeline
+      # Copy artifacts to a location that gets passed along to the deploy pipeline
       - script:
-          name: copy binary
-          code: cp app "$WERCKER_OUTPUT_DIR"
+          name: copy artifacts
+          code: cp -R ./etc oauth2_proxy "$WERCKER_OUTPUT_DIR"
 
 deploy:
     box: google/golang
     steps:
+      # Move artifacts to expected dir structure
+      - script:
+          name: move artifacts
+          code: mkdir -p opt/oauth2_proxy && mv ./etc oauth2_proxy opt/oauth2_proxy/
+
+      # Push images
       # Use the scratch step to build a container from scratch based on the files present
       - internal/docker-scratch-push:
           username: $QUAY_USERNAME
           password: $QUAY_PASSWORD
-          entrypoint: ./app
-          cmd: --help
+          entrypoint: $WERCKER_OUTPUT_DIR/opt/oauth2_proxy/oauth2_proxy
+          cmd: --config=$WERCKER_OUTPUT_DIR/etc/oauth2_proxy.cfg
           tag: $SCRATCH_TAG
           ports: "4180"
           repository: quay.io/vend/oauth2_proxy
