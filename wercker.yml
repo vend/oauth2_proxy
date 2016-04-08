@@ -26,7 +26,7 @@ build:
       # Statically build the project
       - script:
           name: go build
-          code: CGO_ENABLED=0 go build -a -ldflags '-s' -installsuffix cgo -o app .
+          code: CGO_ENABLED=0 go build -a -ldflags '-s' -installsuffix cgo -o oauth2_proxy .
 
       # Copy artifacts to a location that gets passed along to the deploy pipeline
       - script:
