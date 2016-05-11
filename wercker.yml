@@ -18,11 +18,6 @@ build:
           code: |
               go get github.com/vend/oauth2_proxy
 
-      ## Test the project
-      #- script:
-      #    name: go test
-      #    code: go test ./..
-
       # Statically build the project
       - script:
           name: go build
@@ -39,15 +34,15 @@ deploy:
       # Move artifacts to expected dir structure
       - script:
           name: move artifacts
-          code: mkdir -p opt/oauth2_proxy && mv ./etc oauth2_proxy opt/oauth2_proxy/
+          code: mkdir -p /opt/oauth2_proxy && mv ./etc oauth2_proxy /opt/oauth2_proxy/
 
       # Push images
       # Use the scratch step to build a container from scratch based on the files present
       - internal/docker-scratch-push:
           username: $QUAY_USERNAME
           password: $QUAY_PASSWORD
-          entrypoint: $WERCKER_OUTPUT_DIR/opt/oauth2_proxy/oauth2_proxy
-          cmd: --config=$WERCKER_OUTPUT_DIR/etc/oauth2_proxy.cfg
+          entrypoint: /opt/oauth2_proxy/oauth2_proxy
+          cmd: --config=/opt/oauth2_proxy/etc/oauth2_proxy.cfg
           tag: $SCRATCH_TAG
           ports: "4180"
           repository: quay.io/vend/oauth2_proxy
