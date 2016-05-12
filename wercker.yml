@@ -34,7 +34,7 @@ deploy:
       # Move artifacts to expected dir structure
       - script:
           name: move artifacts
-          code: mkdir -p /opt/oauth2_proxy && mv ./etc oauth2_proxy /opt/oauth2_proxy/
+          code: mkdir -p opt/oauth2_proxy && mv ./etc oauth2_proxy opt/oauth2_proxy/
 
       # Push images
       # Use the scratch step to build a container from scratch based on the files present
